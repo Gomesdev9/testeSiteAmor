@@ -1,26 +1,70 @@
-const tempoElemento = document.getElementById('tempo-juntos');
+const canvas = document.getElementById('coraçoes');
+const ctx = canvas.getContext('2d');
 
-function calcularTempoJuntos() {
-  const dataInicio = new Date(2022, 5, 9); // 09/06/2022 (mês começa em 0)
-  const hoje = new Date();
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  let anos = hoje.getFullYear() - dataInicio.getFullYear();
-  let meses = hoje.getMonth() - dataInicio.getMonth();
-  let dias = hoje.getDate() - dataInicio.getDate();
+const coracoes = [];
+const numeroCoracoes = 50;
 
-  if (dias < 0) {
-    meses--;
-    const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
-    dias += ultimoDiaMesAnterior;
-  }
-
-  if (meses < 0) {
-    anos--;
-    meses += 12;
-  }
-
-  tempoElemento.innerText = `Estamos juntos há ${anos} anos, ${meses} meses e ${dias} dias 💖`;
+for (let i = 0; i < numeroCoracoes; i++) {
+    coracoes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 20 + 10,
+        speed: Math.random() * 1 + 0.5,
+        opacity: Math.random() * 0.5 + 0.5
+    });
 }
 
-calcularTempoJuntos();
-setInterval(calcularTempoJuntos, 1000 * 60 * 60); // Atualiza a cada hora
+function desenharCoracao(x, y, tamanho) {
+    ctx.beginPath();
+    const topCurveHeight = tamanho * 0.3;
+    ctx.moveTo(x, y + topCurveHeight);
+    ctx.bezierCurveTo(
+        x, y,
+        x - tamanho / 2, y,
+        x - tamanho / 2, y + topCurveHeight
+    );
+    ctx.bezierCurveTo(
+        x - tamanho / 2, y + (tamanho + topCurveHeight) / 2,
+        x, y + (tamanho + topCurveHeight) / 2,
+        x, y + tamanho
+    );
+    ctx.bezierCurveTo(
+        x, y + (tamanho + topCurveHeight) / 2,
+        x + tamanho / 2, y + (tamanho + topCurveHeight) / 2,
+        x + tamanho / 2, y + topCurveHeight
+    );
+    ctx.bezierCurveTo(
+        x + tamanho / 2, y,
+        x, y,
+        x, y + topCurveHeight
+    );
+    ctx.closePath();
+    ctx.fill();
+}
+
+function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    coracoes.forEach(coracao => {
+        ctx.fillStyle = `rgba(255, 77, 109, ${coracao.opacity})`;
+        desenharCoracao(coracao.x, coracao.y, coracao.size);
+        coracao.y += coracao.speed;
+
+        if (coracao.y > canvas.height) {
+            coracao.y = -20;
+            coracao.x = Math.random() * canvas.width;
+        }
+    });
+
+    requestAnimationFrame(animar);
+}
+
+animar();
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
