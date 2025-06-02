@@ -146,3 +146,26 @@ window.addEventListener('resize', () => {
     canvasBotao.width = botao.offsetWidth;
     canvasBotao.height = botao.offsetHeight;
 });
+
+
+
+
+const contador = document.getElementById('contador');
+
+// Coloca a data de quando começaram a namorar
+const dataInicio = new Date('2021-06-09');
+
+function atualizarContagem() {
+    const hoje = new Date();
+    const diferenca = hoje - dataInicio;
+
+    const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+    const anos = Math.floor(dias / 365);
+    const meses = Math.floor((dias % 365) / 30);
+    const diasRestantes = dias - (anos * 365) - (meses * 30);
+
+    contador.innerHTML = `${anos} anos, ${meses} meses e ${diasRestantes} dias`;
+}
+
+atualizarContagem();
+setInterval(atualizarContagem, 1000);
